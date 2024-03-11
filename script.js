@@ -2,6 +2,26 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent default form submission
 
     // Capture form data
+    /**
+     * Represents the form data object.
+     * @typedef {Object} FormData
+     * @property {string} generalCategory - The general category value.
+     * @property {string} associatedPersons - The associated persons value.
+     * @property {string} places - The places value.
+     * @property {string} institutions - The institutions value.
+     * @property {string} events - The events value.
+     * @property {string} typeOfEvent - The type of event value.
+     * @property {string} languages - The languages value.
+     * @property {string} objects - The objects value.
+     * @property {string} dates - The dates value.
+     * @property {string} publisher - The publisher value.
+     * @property {string} associatedPersonsUrl - The associated persons URL value.
+     */
+
+    /**
+     * Represents the form data.
+     * @type {FormData}
+     */
     const formData = {
         generalCategory: document.getElementById('generalCategory').value,
         associatedPersons: document.getElementById('associatedPersons').value,
@@ -13,7 +33,6 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
         objects: document.getElementById('objects').value,
         dates: document.getElementById('dates').value,
         publisher: document.getElementById('publisher').value,
-        associatedPersons: document.getElementById('associatedPersons').value,
         associatedPersonsUrl: document.getElementById('associatedPersonsUrl').value,
     };
 
@@ -25,7 +44,7 @@ document.getElementById('myForm').addEventListener('submit', function(event) {
         const newText = document.createTextNode(value);
         newCell.appendChild(newText);
     });
-
+    
     // Update CSV download link
     updateCSVLink(formData);
 
@@ -92,6 +111,34 @@ document.getElementById('associatedPersons').addEventListener('input', function(
         .catch(error => console.error(error));
 
 
+});
+// Listen for the form submission event
+document.getElementById('personForm').addEventListener('submit', function(event) {
+    // Prevent the form from being submitted normally
+    event.preventDefault();
+
+    // Get the person's name and Wikidata URL from the form
+    var personName = document.getElementById('personName').value;
+    var personUrl = document.getElementById('personUrl').value;
+
+    // Create a new div to hold the person's information
+    var personDiv = document.createElement('div');
+
+    // Create an h1 element for the person's name
+    var nameElement = document.createElement('h1');
+    nameElement.textContent = personName;
+
+    // Create an anchor element for the person's Wikidata URL
+    var urlElement = document.createElement('a');
+    urlElement.href = personUrl;
+    urlElement.textContent = 'View on Wikidata';
+
+    // Append the name and URL elements to the person div
+    personDiv.appendChild(nameElement);
+    personDiv.appendChild(urlElement);
+
+    // Append the person div to the body of the document
+    document.body.appendChild(personDiv);
 });
 document.getElementById('exportJsonButton').addEventListener('click', function() {
     var formData = {

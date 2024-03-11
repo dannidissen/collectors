@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Form Example</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form id="myForm">
+        <div class="form-group">
+            <label for="generalCategory">General Category of the Item:</label>
+            <input type="text" id="generalCategory" name="generalCategory">
+        </div>
+        
+        <div class="form-group">
+            <label for="associatedPersons">Associated Persons:</label>
+            <input type="search" id="associatedPersons" name="associatedPersons" autocomplete="off">
+            <!-- Add this line near your Associated Persons input -->
+            <input type="hidden" id="associatedPersonsUrl" name="associatedPersonsUrl">
+
+            <ul id="searchResults" class="search-results"></ul>
+        </div>
+        <div class="form-group">
+            <label for="places">Places:</label>
+            <input type="text" id="places" name="places">
+        </div>
+        <div class="form-group">
+            <label for="institutions">Institutions:</label>
+            <input type="text" id="institutions" name="institutions">
+        </div>
+        <div class="form-group">
+            <label for="events">Events:</label>
+            <input type="text" id="events" name="events">
+        </div>
+        <div class="form-group">
+            <label for="typeOfEvent">Type of Event:</label>
+            <select id="typeOfEvent" name="typeOfEvent">
+                <option value="conference">Conference</option>
+                <option value="seminar">Seminar</option>
+                <option value="workshop">Workshop</option>
+                <option value="webinar">Webinar</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="languages">Languages:</label>
+            <select id="languages" name="languages">
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="german">German</option>
+                <!-- Add more languages as needed -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="objects">Objects:</label>
+            <input type="text" id="objects" name="objects">
+        </div>
+        <div class="form-group">
+            <label for="dates">Dates:</label>
+            <input type="date" id="dates" name="dates">
+        </div>
+        <div class="form-group">
+            <label for="publisher">Publisher:</label>
+            <input type="text" id="publisher" name="publisher">
+        </div>
+        <button type="submit">Submit</button>
+        <div id="dataDisplayArea">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>General Category</th>
+                        <th>Associated Persons</th>
+                        <th>Places</th>
+                        <th>Institutions</th>
+                        <th>Events</th>
+                        <th>Type of Event</th>
+                        <th>Languages</th>
+                        <th>Objects</th>
+                        <th>Dates</th>
+                        <th>Publisher</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        <a id="downloadLink" style="display:none;">Download CSV</a>
+        <button type="button" id="exportJsonButton">Export as JSON</button>
+
+        
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>

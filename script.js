@@ -63,6 +63,11 @@ function updateCSVLink(data) {
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "submitted_data.csv");
     link.style.display = "block"; // Make the download link visible
+
+    // Create a new page for each submission
+    const newPageContent = Object.entries(data).map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`).join("");
+    const newPage = window.open("", "_blank");
+    newPage.document.write(`<html><head><title>New Page</title></head><body>${newPageContent}</body></html>`);
 }
 
 // Add the event listener for the Wikidata search as previously described

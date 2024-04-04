@@ -9,17 +9,15 @@
 <body>
     <form id="myForm">
         <div class="form-group">
-            <label for="generalCategory">General Category of the Item:</label>
+            <label for="generalCategory">title, short discription:</label>
             <input type="text" id="generalCategory" name="generalCategory">
         </div>
         
         <div class="form-group">
             <label for="associatedPersons">Associated Persons:</label>
             <input type="search" id="associatedPersons" name="associatedPersons" autocomplete="off">
-            <!-- Add this line near your Associated Persons input -->
-            <input type="hidden" id="associatedPersonsUrl" name="associatedPersonsUrl">
-
             <ul id="searchResults" class="search-results"></ul>
+            <div id="addedPersonsList" class="added-persons-list"></div> <!-- Container for displaying added persons -->
         </div>
         <div class="form-group">
             <label for="places">Places:</label>
@@ -35,12 +33,7 @@
         </div>
         <div class="form-group">
             <label for="typeOfEvent">Type of Event:</label>
-            <select id="typeOfEvent" name="typeOfEvent">
-                <option value="conference">Conference</option>
-                <option value="seminar">Seminar</option>
-                <option value="workshop">Workshop</option>
-                <option value="webinar">Webinar</option>
-            </select>
+           <input type="text" id="typeOfEvent" name="typeOfEvent">
         </div>
         <div class="form-group">
             <label for="languages">Languages:</label>
@@ -49,6 +42,8 @@
                 <option value="spanish">Spanish</option>
                 <option value="french">French</option>
                 <option value="german">German</option>
+                <option value="chinese">Chinese</option>
+                <option value="Hebrew">Hebrew</option>
                 <!-- Add more languages as needed -->
             </select>
         </div>
@@ -64,7 +59,7 @@
             <label for="publisher">Publisher:</label>
             <input type="text" id="publisher" name="publisher">
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit">Save</button>
         <div id="dataDisplayArea">
             <table id="dataTable">
                 <thead>
@@ -87,7 +82,6 @@
             </table>
         </div>
         <a id="downloadLink" style="display:none;">Download CSV</a>
-        <button type="button" id="exportJsonButton">Export as JSON</button>
 
         
     </form>

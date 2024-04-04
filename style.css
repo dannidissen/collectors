@@ -1,95 +1,61 @@
+/* Basic dark mode styling */
 body {
+    background-color: #121212; /* Dark background for dark mode */
+    color: #E0E0E0; /* Light text color for contrast */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    padding: 20px;
 }
 
-.form-group {
-    margin-bottom: 20px;
+/* Container or general layout adjustments */
+.container, .form-group, .submission, .entity {
+    background-color: #242424; /* Slightly lighter dark shade for content areas */
+    border: 1px solid #333; /* Borders to distinguish elements */
+    padding: 20px;
+    margin-bottom: 20px; /* Space between elements */
+    border-radius: 8px; /* Soften edges */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #333;
+h1, h2, h3, h4, h5, h6, label {
+    color: #BB86FC; /* A light purple for headers and labels for a pop of color */
 }
 
-input[type="text"],
-input[type="email"],
-input[type="date"],
-input[type="search"],
-select {
-    width: 100%;
+/* Style for links */
+a {
+    color: #BB86FC; /* Matching headers and labels */
+    text-decoration: none; /* No underline */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover for clarity */
+}
+
+/* Input and Button Adjustments */
+input[type="text"], input[type="date"], input[type="search"], select, button, input[type="submit"] {
+    background-color: #333; /* Darker background for form elements */
+    color: #E0E0E0; /* Light text */
+    border: 1px solid #444; /* Slightly lighter border for visibility */
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
+    margin-bottom: 20px; /* Spacing */
+    border-radius: 4px; /* Rounded corners */
 }
 
-button {
-    background-color: #008cba;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #005f73;
-}
-
-/* Search results styling */
+/* Specific styles for the search results to stand out */
 .search-results {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 0 0 8px 8px;
-    background-color: white;
-    position: absolute;
-    width: calc(100% - 2px); /* Adjust based on parent's border */
-    z-index: 1000; /* Ensure it's above other content */
+    list-style-type: none;
+    background-color: #333; /* Dark background for the dropdown */
+    color: #fff; /* Ensure text is light */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); /* Soft glow */
 }
 
-.search-results li {
-    padding: 8px;
-    cursor: pointer;
+.search-results li:hover, .search-results li:focus {
+    background-color: #444; /* Slightly lighter on hover/focus */
 }
 
-.search-results li:hover {
-    background-color: #f0f0f0;
-}
-#dataTable {
-    width: 100%;
-    border-collapse: collapse;
+/* Ensuring distinct separation of items/entities */
+.submission, .entity {
     margin-top: 20px;
-}
-
-#dataTable, #dataTable th, #dataTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-#dataTable th {
-    background-color: #007BFF;
-    color: white;
-}
-
-#downloadLink {
-    margin-top: 20px;
-    display: inline-block;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 16px;
+    background-color: #1E1E1E; /* Darker than container bg for contrast */
+    border-left: 5px solid #BB86FC; /* Colorful side border for distinction */
 }

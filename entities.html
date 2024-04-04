@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entities</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Wikidata Entities</h1>
+    <div id="entitiesContainer"></div>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    const entitiesContainer = document.getElementById('entitiesContainer');
+    const entities = JSON.parse(localStorage.getItem('entities')) || {};
+    const entries = Object.entries(entities);
+
+    if (entries.length > 0) {
+        entries.forEach(([name, url]) => {
+            // Extract the entity ID from the URL
+            const entityId = url.match(/Q\d+$/)[0];
+            if (entityId) {
+                fetchEntityDetails(entityId, (details) => {
+                    // Now we have details, including birth and death dates
+                    const entityDiv = document.createElement('div');
+                    entityDiv.classList.add('entity');
+                    entityDiv.innerHTML = `
+                        <p><strong>${name}</strong>: <a href="${url}" target="_blank">${url}</a></p>
+                        <p>Birth: ${details.birthDate || 'Unknown'}</p>
+                        <p>Death: ${details.deathDate || 'Unknown'}</p>
+                    `;
+                    entitiesContainer.appendChild(entityDiv);
+                });
+            }
+        });
+    } else {
+        entitiesContainer.textContent = 'No entities found.';
+    }
+});
+
+function fetchEntityDetails(entityId, callback) {
+    const wikidataApiBaseUrl = 'https://www.wikidata.org/w/api.php';
+    const entityDetailsUrl = `${wikidataApiBaseUrl}?action=wbgetentities&ids=${entityId}&format=json&origin=*`;
+
+    fetch(entityDetailsUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.entities && data.entities[entityId]) {
+                const entity = data.entities[entityId];
+                const birthDate = entity.claims.P569 ? formatDate(entity.claims.P569[0].mainsnak.datavalue.value.time) : 'Unknown';
+                const deathDate = entity.claims.P570 ? formatDate(entity.claims.P570[0].mainsnak.datavalue.value.time) : 'Unknown';
+                callback({ birthDate, deathDate });
+            }
+        })
+        .catch(error => console.error('Error fetching entity details:', error));
+}
+
+// Helper function to format Wikidata time strings into more readable dates
+function formatDate(wikidataTime) {
+    return wikidataTime ? wikidataTime.replace(/^\+/, '').split('T')[0] : 'Unknown';
+}
+    </script>
+</body>
+</html>

@@ -1,171 +1,158 @@
-document.getElementById('myForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission
+document.addEventListener('DOMContentLoaded', function() {
+    let associatedPersons = [];
 
-    // Capture form data
-    /**
-     * Represents the form data object.
-     * @typedef {Object} FormData
-     * @property {string} generalCategory - The general category value.
-     * @property {string} associatedPersons - The associated persons value.
-     * @property {string} places - The places value.
-     * @property {string} institutions - The institutions value.
-     * @property {string} events - The events value.
-     * @property {string} typeOfEvent - The type of event value.
-     * @property {string} languages - The languages value.
-     * @property {string} objects - The objects value.
-     * @property {string} dates - The dates value.
-     * @property {string} publisher - The publisher value.
-     * @property {string} associatedPersonsUrl - The associated persons URL value.
-     */
+    document.getElementById('myForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    /**
-     * Represents the form data.
-     * @type {FormData}
-     */
-    const formData = {
-        generalCategory: document.getElementById('generalCategory').value,
-        associatedPersons: document.getElementById('associatedPersons').value,
-        places: document.getElementById('places').value,
-        institutions: document.getElementById('institutions').value,
-        events: document.getElementById('events').value,
-        typeOfEvent: document.getElementById('typeOfEvent').value,
-        languages: document.getElementById('languages').value,
-        objects: document.getElementById('objects').value,
-        dates: document.getElementById('dates').value,
-        publisher: document.getElementById('publisher').value,
-        associatedPersonsUrl: document.getElementById('associatedPersonsUrl').value,
-    };
+        // Construct form data object
+        const formData = {
+            generalCategory: document.getElementById('generalCategory').value,
+            associatedPersons: associatedPersons, // Preserve the array structure
+            places: document.getElementById('places').value,
+            institutions: document.getElementById('institutions').value,
+            events: document.getElementById('events').value,
+            typeOfEvent: document.getElementById('typeOfEvent').value,
+            languages: document.getElementById('languages').value,
+            objects: document.getElementById('objects').value,
+            dates: document.getElementById('dates').value,
+            publisher: document.getElementById('publisher').value,
+        };
 
-    // Display data in the table
-    const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
-    const newRow = tableBody.insertRow();
-    Object.values(formData).forEach(value => {
-        const newCell = newRow.insertCell();
-        const newText = document.createTextNode(value);
-        newCell.appendChild(newText);
+        // Save formData to localStorage
+        saveFormData(formData);
+
+        // Reset the form and the associated persons array for the next entry
+        resetFormAndAssociatedPersons();
     });
-    
-    // Update CSV download link
-    updateCSVLink(formData);
 
-    // Clear form fields after submission
-    event.target.reset();
-    document.getElementById('searchResults').innerHTML = ''; // Clear search results
-});
+    // The rest of your existing JavaScript code...
 
-function updateCSVLink(data) {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += Object.keys(data).join(",") + "\r\n"; // Add header
-    csvContent += Object.values(data).join(",") + "\r\n"; // Add data
+    function resetFormAndAssociatedPersons() {
+        // Clear form fields
+        document.getElementById('myForm').reset();
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.getElementById('downloadLink');
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "submitted_data.csv");
-    link.style.display = "block"; // Make the download link visible
+        // Clear the associated persons array and update the UI
+        associatedPersons = [];
+        updatePersonListUI();
 
-    // Create a new page for each submission
-    const newPageContent = Object.entries(data).map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`).join("");
-    const newPage = window.open("", "_blank");
-    newPage.document.write(`<html><head><title>New Page</title></head><body>${newPageContent}</body></html>`);
-}
-
-// Add the event listener for the Wikidata search as previously described
-
-
-document.getElementById('associatedPersons').addEventListener('input', function(event) {
-    const searchTerm = event.target.value;
-    if (searchTerm.length < 3) {
-        document.getElementById('searchResults').innerHTML = '';
-        return;
+        // Optionally, clear other dynamically generated content as needed
     }
 
-    const url = "https://www.wikidata.org/w/api.php";
-    const params = {
-        action: "wbsearchentities",
-        language: "en",
-        format: "json",
-        search: searchTerm,
-        limit: 5,
-        origin: "*",
-    };
-
-    let query = url + "?origin=*";
-    Object.keys(params).forEach(function(key) {
-        query += `&${key}=${encodeURIComponent(params[key])}`;
-    });
-
-    fetch(query)
-        .then(response => response.json())
-        .then(data => {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = '';
-            data.search.forEach(function(item) {
-                const li = document.createElement('li');
-                li.textContent = item.label;
-                resultsContainer.appendChild(li);
+    function saveFormData(formData) {
+        const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
         
-                // Update click event listener to also save the URL
-                li.addEventListener('click', function() {
-                    document.getElementById('associatedPersons').value = item.label; // Save the name
-                    document.getElementById('associatedPersonsUrl').value = item.concepturi; // Save the URL
-                    resultsContainer.innerHTML = ''; // Clear results
-                });
-            });
-        })
-        .catch(error => console.error(error));
+        // Properly serialize associatedPersons
+        const serializedAssociatedPersons = formData.associatedPersons.map(person => JSON.stringify(person));
+        formData.associatedPersons = serializedAssociatedPersons;
+        
+        submissions.push(formData);
+        localStorage.setItem('submissions', JSON.stringify(submissions));
+    
+        // Assuming entities need similar treatment
+        const entities = JSON.parse(localStorage.getItem('entities')) || {};
+        formData.associatedPersons.forEach(personStr => {
+            const person = JSON.parse(personStr); // Deserialize
+            if(person.name && person.url) {
+                entities[person.name] = person.url;
+            }
+        });
+        localStorage.setItem('entities', JSON.stringify(entities));
+    }
+    
+    
 
-
-});
-// Listen for the form submission event
-document.getElementById('personForm').addEventListener('submit', function(event) {
-    // Prevent the form from being submitted normally
-    event.preventDefault();
-
-    // Get the person's name and Wikidata URL from the form
-    var personName = document.getElementById('personName').value;
-    var personUrl = document.getElementById('personUrl').value;
-
-    // Create a new div to hold the person's information
-    var personDiv = document.createElement('div');
-
-    // Create an h1 element for the person's name
-    var nameElement = document.createElement('h1');
-    nameElement.textContent = personName;
-
-    // Create an anchor element for the person's Wikidata URL
-    var urlElement = document.createElement('a');
-    urlElement.href = personUrl;
-    urlElement.textContent = 'View on Wikidata';
-
-    // Append the name and URL elements to the person div
-    personDiv.appendChild(nameElement);
-    personDiv.appendChild(urlElement);
-
-    // Append the person div to the body of the document
-    document.body.appendChild(personDiv);
-});
-document.getElementById('exportJsonButton').addEventListener('click', function() {
-    var formData = {
-        // Assume you have fields for associated persons like this
-        associatedPersons: []
-    };
-    document.querySelectorAll('.associatedPerson').forEach(function(personDiv) {
-        var personName = personDiv.querySelector('[name="associatedPersonName[]"]').value;
-        var personUrl = personDiv.querySelector('[name="associatedPersonUrl[]"]').value;
-        if (personName && personUrl) { // Ensure non-empty values are added
-            formData.associatedPersons.push({ name: personName, url: personUrl });
+    document.getElementById('associatedPersons').addEventListener('input', function(event) {
+        const searchTerm = event.target.value;
+        if (searchTerm.length < 3) { // Minimum search term length, to avoid too broad searches
+            document.getElementById('searchResults').innerHTML = '';
+            return;
         }
+
+        const url = "https://www.wikidata.org/w/api.php";
+        const params = {
+            action: "wbsearchentities",
+            language: "en",
+            format: "json",
+            search: searchTerm,
+            limit: 5,
+            origin: "*", // CORS bypass for demonstration purposes; be aware of security implications
+        };
+
+        let query = `${url}?origin=*`;
+        Object.keys(params).forEach(key => query += `&${key}=${encodeURIComponent(params[key])}`);
+
+        fetch(query)
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('searchResults');
+                resultsContainer.innerHTML = ''; // Clear previous results
+                data.search.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.label;
+                    li.setAttribute('data-url', item.concepturi); // Store URL in data attribute for later use
+                    resultsContainer.appendChild(li);
+
+                    // Click event to select a person and clear search results
+                    li.addEventListener('click', function() {
+                        // Assume entity ID is stored in data-entity-id attribute (you might need to adjust this)
+                        const entityId = this.getAttribute('data-url').match(/Q\d+$/)[0]; // Extract Q number from URL
+                        
+                        fetchEntityDetailsAndVerify(entityId, isHuman => {
+                            if (isHuman) {
+                                // If the entity is a human, proceed to add
+                                addSelectedPerson(this.textContent, this.getAttribute('data-url'));
+                            } else {
+                                // Handle the case where the entity is not a human
+                                alert("Selected entity is not a human.");
+                            }
+                        });
+                    
+                        document.getElementById('associatedPersons').value = ''; // Clear the input field
+                        document.getElementById('searchResults').innerHTML = ''; // Clear search results
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching Wikidata:', error));
     });
 
-    // Convert formData to JSON string
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(formData));
-    // Create a temporary link to initiate the download
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "formData.json");
-    document.body.appendChild(downloadAnchorNode); // required for firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-});
+    function fetchEntityDetailsAndVerify(entityId, callback) {
+        const wikidataApiBaseUrl = 'https://www.wikidata.org/w/api.php';
+        const entityDetailsUrl = `${wikidataApiBaseUrl}?action=wbgetentities&ids=${entityId}&format=json&origin=*`;
+    
+        fetch(entityDetailsUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.entities && data.entities[entityId]) {
+                    const entityClaims = data.entities[entityId].claims;
+                    if (entityClaims.P31 && entityClaims.P31.some(claim => claim.mainsnak.datavalue.value.id === 'Q5')) {
+                        callback(true); // It's a human
+                    } else {
+                        callback(false); // Not a human
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching entity details:', error));
+    }
+    
+    function addSelectedPerson(name, url) {
+        associatedPersons.push({ name, url });
+        updatePersonListUI();
+    }
 
+    function updatePersonListUI() {
+        const listContainer = document.getElementById('addedPersonsList');
+        listContainer.innerHTML = ''; // Clear current list
+        associatedPersons.forEach((person, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${person.name} (URL: ${person.url})`; // Display name and URL
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function() {
+                associatedPersons.splice(index, 1); // Remove the person from array
+                updatePersonListUI(); // Update the UI
+            };
+            li.appendChild(removeButton);
+            listContainer.appendChild(li);
+        });
+    }
+});

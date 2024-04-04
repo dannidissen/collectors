@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved items</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Saved items</h1>
+    <div id="submissionsContainer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submissionsContainer = document.getElementById('submissionsContainer');
+            const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+            if (submissions.length > 0) {
+                submissions.forEach(submission => {
+                    
+                    const submissionDiv = document.createElement('div');
+                    submissionDiv.classList.add('submission');
+                    submissionDiv.innerHTML = `
+                        <h2>${submission.generalCategory}</h2>
+                        <p>Associated Persons: ${submission.associatedPersons}</p>
+                        <p>Places: ${submission.places}</p>
+                        <p>Institutions: ${submission.institutions}</p>
+                        <p>Events: ${submission.events}</p>
+                        <p>Type of Event: ${submission.typeOfEvent}</p>
+                        <p>Languages: ${submission.languages}</p>
+                        <p>Objects: ${submission.objects}</p>
+                        <p>Dates: ${submission.dates}</p>
+                        <p>Publisher: ${submission.publisher}</p>
+                    `;
+                    submissionsContainer.appendChild(submissionDiv);
+                });
+            } else {
+                submissionsContainer.textContent = 'No submissions yet.';
+            }
+        });
+    </script>
+</body>
+</html>
